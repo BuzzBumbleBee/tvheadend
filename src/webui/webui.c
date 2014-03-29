@@ -232,6 +232,12 @@ http_stream_transcode(http_connection_t *hc, muxer_t *mux, char *mime, int *mime
 
   tvhlog(LOG_INFO, "webui", "Transcoding stream with transcoder %s", transcoder);
 
+  if(strchr(transcoder,'/') != NULL)
+  {
+    tvhlog(LOG_ERR, "webui", "illegal character found in transcoder name!");
+    return 0;
+  }
+
   if(snprintf(tr_bin_path, sizeof(tr_bin_path), "%s/%s/%s.mime", base_path, subdir, transcoder) <= 0)
   {
     tvhlog(LOG_ERR, "webui", "snprintf failed!");
