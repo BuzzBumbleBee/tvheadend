@@ -303,14 +303,23 @@ http_stream_transcode(http_connection_t *hc, muxer_t *mux, char *mime, int *mime
     close(fd_pipe[0]);
     close(fd_pipe[1]);
 
-    // convert all http arguments into env vars
-    http_arg_t *ra;
-    char name[128];
-    TAILQ_FOREACH(ra, &hc->hc_req_args, link)
-    {
-      if(snprintf(name, sizeof(name), "GET_%s", ra->key) <= 0)
-        exit(-100);
-      setenv(name, ra->val, 0);
+    //If we have a valid resolution variable over http we set it as an env variable
+    char *resolution;
+    char resolution_http_key[] = "resolution";;
+
+    if((resolution = http_arg_get(&hc->hc_args, resolution_http_key)) != NULL) {
+        if(strncmp(resolution,"480",5)==0)
+        {
+            setenv(resolution_http_key, resolution, 0);
+        } 
+        else if (strncmp(resolution,"720",5)==0) 
+        {
+            setenv(resolution_http_key, resolution, 0);
+        }
+        else if (strncmp(resolution,"1080",5)==0) 
+        {
+           setenv(resolution_http_key, resolution, 0);
+        }  
     }
 
     // Execute the transcoder
